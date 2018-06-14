@@ -21,10 +21,7 @@ func proxy(tcpsock net.Conn, wsock *websocket.Conn) {
 		message, _ := bufio.NewReader(tcpsock).ReadString('\n')
 		fmt.Print("Message from TCP server: " + message)
 		fmt.Printf("%s sent: %s\n", wsock.RemoteAddr(), message)
-		err := wsock.WriteMessage(websocket.TextMessage, []byte(message))
-		if err != nil {
-			fmt.Printf("error")
-		}
+		wsock.WriteMessage(websocket.TextMessage, []byte(message))
 	}
 }
 
@@ -40,7 +37,7 @@ func main() {
 			wsock.Close()
 		}()
 
-		go proxy(tcpsock, wsock)
+		proxy(tcpsock, wsock)
 	})
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
